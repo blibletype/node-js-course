@@ -9,24 +9,32 @@ exports.getIndex = (req, res) => {
 }
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll((products) => {
-    res.render('shop/products', {
-      products: products,
-      docTitle: 'Shop',
-      path: '/products',
+  Product.findAll()
+    .then((products) => {
+      res.render('shop/products', {
+        products: products,
+        docTitle: 'Shop',
+        path: '/products',
+      })
     })
-  })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.getProduct = (req, res) => {
   const id = req.params.id
-  Product.getProductById(id, (product) => {
-    res.render('shop/product-detail', {
-      docTitle: product.title,
-      product: product,
-      path: '/products',
+  Product.findByPk(id)
+    .then((product) => {
+      res.render('shop/product-detail', {
+        docTitle: product.title,
+        product: product,
+        path: '/products',
+      })
     })
-  })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.getCart = (req, res) => {

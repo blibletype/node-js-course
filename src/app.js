@@ -11,6 +11,8 @@ const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 const errorController = require('./controllers/errorController')
 
+const sequelize = require('./utils/database')
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -19,4 +21,11 @@ app.use(shopRoutes)
 
 app.use(errorController.pageNotFound)
 
-app.listen(PORT)
+sequelize
+  .sync()
+  .then(() => {
+    app.listen(PORT)
+  })
+  .catch((err) => {
+    console.log(err)
+  })

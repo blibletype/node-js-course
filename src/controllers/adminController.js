@@ -13,43 +13,75 @@ exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit
   if (!editMode) return res.redirect('/')
   const productId = req.params.id
-  Product.getProductById(productId, (product) => {
-    if (!product) return res.redirect('/')
-    res.render('admin/edit-product', {
-      docTitle: 'Edit product',
-      path: '/admin/edit-product',
-      editing: editMode,
-      product: product,
+  Product.findByPk(productId)
+    .then((product) => {
+      if (!product) return res.redirect('/')
+      res.render('admin/edit-product', {
+        docTitle: 'Edit product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        product: product,
+      })
     })
-  })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = async (req, res) => {
   const { id, title, price, description, imageUrl } = req.body
-  const updatedProduct = new Product(id, title, price, description, imageUrl)
-  updatedProduct.save()
-  res.redirect('/admin/products')
+  const product = await Product.findByPk(id)
+  product.title = title
+  product.price = price
+  product.description = description
+  product.imageUrl = imageUrl
+  product
+    .save()
+    .then(() => {
+      res.redirect('/admin/products')
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.postAddProduct = (req, res) => {
   const { title, price, description, imageUrl } = req.body
-  const product = new Product(null, title, price, description, imageUrl)
-  product.save()
-  res.redirect('/products')
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+    .then(() => {
+      res.redirect('/products')
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.deleteProduct = (req, res) => {
   const { id } = req.body
-  Product.deleteById(id)
-  res.redirect('/products')
+  Product.destroy({ where: { id: id } })
+    .then(() => {
+      res.redirect('/products')
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll((products) => {
-    res.render('admin/products', {
-      products: products,
-      docTitle: 'Products',
-      path: '/admin/products',
+  Product.findAll()
+    .then((products) => {
+      res.render('admin/products', {
+        products: products,
+        docTitle: 'Products',
+        path: '/admin/products',
+      })
     })
-  })
+    .catch((err) => {
+      console.log(err)
+    })
 }
