@@ -1,0 +1,17 @@
+extends ../layouts/main-layout.pug 
+block styles 
+    link(rel="stylesheet", href="/css/main.css")
+    link(rel="stylesheet", href="/css/product.css")
+block content
+    main 
+        if products.length > 0
+            ul 
+                each product in products
+                    li
+                        p #{product.productData.title} (#{product.quantity})
+                        form(action="/cart-remove-item" method="POST")
+                            input(type="hidden", name="id", value=product.productData.id)
+                            button.btn(type="submit") Remove 
+
+        else 
+            h1 There are no products yet

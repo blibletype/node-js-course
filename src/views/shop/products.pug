@@ -1,0 +1,27 @@
+extends ../layouts/main-layout.pug
+
+block styles
+    link(rel="stylesheet", href="/css/main.css")
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+    main
+        if products.length > 0 
+            .grid
+                each product in products
+                    article.card.product-item
+                        header.card__header
+                            h1.product__title #{product.title}
+                        .card__image
+                            img(src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png", alt="A Book")
+                        .card__content
+                            h2.product__price $#{product.price}
+                            p.product__description #{product.description}
+                        .card__actions
+                            a.btn(href=`/products/${product.id}`) Details
+                            form(action="/cart", method="post")
+                                button.btn(type="submit") Add to cart
+                                input(type="hidden", name="id", value=`${product.id}`)
+        else 
+            h1 There are no products yet
+        
