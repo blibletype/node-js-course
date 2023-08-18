@@ -16,6 +16,8 @@ const User = require('./models/user')
 const Product = require('./models/product')
 const Cart = require('./models/cart')
 const CartItem = require('./models/cartItem')
+const Order = require('./models/order')
+const OrderItem = require('./models/orderItem')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
@@ -42,18 +44,27 @@ User.hasOne(Cart)
 Cart.belongsTo(User)
 Cart.belongsToMany(Product, { through: CartItem })
 Product.belongsToMany(Cart, { through: CartItem })
+Order.belongsTo(User)
+User.hasMany(Order)
+Order.belongsToMany(Product, { through: OrderItem })
 
 sequelize
   .sync()
   .then(() => {
-    return User.findOrCreate({
-      where: { id: 1 },
-      defaults: {
+    return User.findByPk(1)
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({
         username: 'blibletype',
         email: 'maxymkoval2510@gmail.com',
-      },
-    })
+      })
+    }
+    return user
   })
+  // .then((user) => {
+  //   return user.createCart()
+  // })
   .then(() => {
     app.listen(PORT)
   })
