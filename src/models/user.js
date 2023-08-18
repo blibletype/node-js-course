@@ -9,16 +9,8 @@ const User = sequelize.define('user', {
     unique: true,
     autoIncrement: true,
   },
-  username: {
-    type: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  username: DataTypes.STRING,
+  email: DataTypes.STRING,
 })
 
 module.exports = User
