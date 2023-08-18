@@ -13,8 +13,10 @@ exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit
   if (!editMode) return res.redirect('/')
   const productId = req.params.id
-  Product.findByPk(productId)
-    .then((product) => {
+  req.user
+    .getProducts({ where: { id: productId } })
+    .then((products) => {
+      const product = products[0]
       if (!product) return res.redirect('/')
       res.render('admin/edit-product', {
         docTitle: 'Edit product',
@@ -47,12 +49,14 @@ exports.postEditProduct = async (req, res) => {
 
 exports.postAddProduct = (req, res) => {
   const { title, price, description, imageUrl } = req.body
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+      userId: req.user.id,
+    })
     .then(() => {
       res.redirect('/products')
     })
@@ -73,7 +77,8 @@ exports.deleteProduct = (req, res) => {
 }
 
 exports.getProducts = (req, res) => {
-  Product.findAll()
+  req.user
+    .getProducts()
     .then((products) => {
       res.render('admin/products', {
         products: products,
