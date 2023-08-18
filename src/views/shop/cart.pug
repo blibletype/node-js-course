@@ -8,10 +8,15 @@ block content
             ul 
                 each product in products
                     li
-                        p #{product.productData.title} (#{product.quantity})
+                        p #{product.title} (#{product.cartItem.quantity})
                         form(action="/cart-remove-item" method="POST")
-                            input(type="hidden", name="id", value=product.productData.id)
+                            input(type="hidden", name="id", value=product.id)
                             button.btn(type="submit") Remove 
+            
+            hr
+            .centered 
+                form(action="/create-order", method="post") 
+                    button.btn(type="submit") Buy
 
         else 
             h1 There are no products yet

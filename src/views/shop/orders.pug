@@ -3,4 +3,18 @@ block styles
     link(rel="stylesheet", href="/css/main.css")
     link(rel="stylesheet", href="/css/product.css")
 block content
-    h1 Orders
+    main 
+        if orders.length > 0
+            ul 
+                each order in orders
+                    li
+                        h1 Order № #{order.id}
+                        p List of products:
+                        ul 
+                            each item in order.products
+                                li #{item.title} (#{item.orderItem.quantity})
+
+                        
+            
+        else 
+            h1 There are no orders yet
