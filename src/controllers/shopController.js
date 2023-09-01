@@ -8,7 +8,7 @@ exports.getIndex = (req, res) => {
 }
 
 exports.getProducts = (req, res) => {
-  Product.findAll()
+  Product.fetchAll()
     .then((products) => {
       res.render('shop/products', {
         products: products,
@@ -22,8 +22,8 @@ exports.getProducts = (req, res) => {
 }
 
 exports.getProduct = (req, res) => {
-  const id = req.params.id
-  Product.findByPk(id)
+  const { id } = req.params
+  Product.findById(id)
     .then((product) => {
       res.render('shop/product-detail', {
         docTitle: product.title,
