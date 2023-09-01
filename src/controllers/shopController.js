@@ -37,51 +37,22 @@ exports.getProduct = (req, res) => {
 }
 
 exports.getCart = (req, res) => {
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts()
+  req.user.getCart().then((products) => {
+    res.render('shop/cart', {
+      products: products,
+      docTitle: 'Cart',
+      path: '/cart',
     })
-    .then((products) => {
-      res.render('shop/cart', {
-        products: products,
-        docTitle: 'Cart',
-        path: '/cart',
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  })
 }
 
 exports.postCart = (req, res) => {
   const { id } = req.body
-  let fetchedCart
-  let newQuantity = 1
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart
-      return cart.getProducts({ where: { id: id } })
-    })
-    .then((products) => {
-      let product
-      if (products.length > 0) {
-        product = products[0]
-      }
-
-      if (product) {
-        const oldQuantity = product.cartItem.quantity
-        newQuantity = oldQuantity + 1
-      }
-      return Product.findByPk(id)
-    })
+  Product.findById(id)
     .then((product) => {
-      return fetchedCart.addProduct(product, {
-        through: { quantity: newQuantity },
-      })
+      return req.user.addToCart(product)
     })
-    .then(() => {
+    .then((result) => {
       res.redirect('/cart')
     })
     .catch((err) => {
@@ -92,14 +63,7 @@ exports.postCart = (req, res) => {
 exports.postRemoveCartItem = (req, res) => {
   const { id } = req.body
   req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: id } })
-    })
-    .then((products) => {
-      const product = products[0]
-      return product.cartItem.destroy()
-    })
+    .removeItemFromCart(id)
     .then(() => {
       res.redirect('/cart')
     })
@@ -110,7 +74,7 @@ exports.postRemoveCartItem = (req, res) => {
 
 exports.getOrders = (req, res) => {
   req.user
-    .getOrders({ include: ['products'] })
+    .getOrders()
     .then((orders) => {
       res.render('shop/orders', {
         docTitle: 'Orders',
@@ -124,31 +88,8 @@ exports.getOrders = (req, res) => {
 }
 
 exports.postOrder = (req, res) => {
-  let fetchedCart
   req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart
-      return cart.getProducts()
-    })
-    .then((products) => {
-      return req.user
-        .createOrder()
-        .then((order) => {
-          return order.addProducts(
-            products.map((product) => {
-              product.orderItem = { quantity: product.cartItem.quantity }
-              return product
-            })
-          )
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    })
-    .then(() => {
-      return fetchedCart.setProducts(null)
-    })
+    .createOrder()
     .then(() => {
       res.redirect('/orders')
     })
