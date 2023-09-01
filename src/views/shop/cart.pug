@@ -8,9 +8,9 @@ block content
             ul 
                 each product in products
                     li
-                        p #{product.title} (#{product.cartItem.quantity})
+                        p #{product.title} (#{product.quantity})
                         form(action="/cart-remove-item" method="POST")
-                            input(type="hidden", name="id", value=product.id)
+                            input(type="hidden", name="id", value=product._id)
                             button.btn(type="submit") Remove 
             
             hr

@@ -8,11 +8,11 @@ block content
             ul 
                 each order in orders
                     li
-                        h1 Order № #{order.id}
+                        h1 Order № #{order._id}
                         p List of products:
                         ul 
-                            each item in order.products
-                                li #{item.title} (#{item.orderItem.quantity})
+                            each item in order.items
+                                li #{item.title} (#{item.quantity})
 
                         
             

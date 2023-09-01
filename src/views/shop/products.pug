@@ -18,10 +18,10 @@ block content
                             h2.product__price $#{product.price}
                             p.product__description #{product.description}
                         .card__actions
-                            a.btn(href=`/products/${product.id}`) Details
+                            a.btn(href=`/products/${product._id}`) Details
                             form(action="/cart", method="post")
                                 button.btn(type="submit") Add to cart
-                                input(type="hidden", name="id", value=`${product.id}`)
+                                input(type="hidden", name="id", value=`${product._id}`)
         else 
             h1 There are no products yet
         
