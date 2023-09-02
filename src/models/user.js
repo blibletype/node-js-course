@@ -1,55 +1,55 @@
-const { ObjectId } = require('mongodb')
-const { getDB } = require('../utils/database')
+const { ObjectId } = require('mongodb');
+const { getDB } = require('../utils/database');
 
 class User {
   constructor(username, email, cart, id) {
-    this.username = username
-    this.email = email
-    this.cart = cart
-    this._id = id
+    this.username = username;
+    this.email = email;
+    this.cart = cart;
+    this._id = id;
   }
 
   save() {
-    const db = getDB()
-    return db.collection('users').insertOne(this)
+    const db = getDB();
+    return db.collection('users').insertOne(this);
   }
 
   static findById(id) {
-    const db = getDB()
-    return db.collection('users').findOne({ _id: new ObjectId(id) })
+    const db = getDB();
+    return db.collection('users').findOne({ _id: new ObjectId(id) });
   }
 
   addToCart(product) {
-    const db = getDB()
+    const db = getDB();
     const cartProductIndex = this.cart.items.findIndex((cartProduct) => {
-      return cartProduct.productId.toString() === product._id.toString()
-    })
+      return cartProduct.productId.toString() === product._id.toString();
+    });
 
-    const updatedCartItems = [...this.cart.items]
-    let newQuantity = 1
+    const updatedCartItems = [...this.cart.items];
+    let newQuantity = 1;
 
     if (cartProductIndex >= 0) {
-      newQuantity = this.cart.items[cartProductIndex].quantity + 1
-      updatedCartItems[cartProductIndex].quantity = newQuantity
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
       updatedCartItems.push({
         productId: new ObjectId(product._id),
         quantity: newQuantity,
-      })
+      });
     }
     return db
       .collection('users')
       .updateOne(
         { _id: new ObjectId(this._id) },
         { $set: { cart: { items: updatedCartItems } } }
-      )
+      );
   }
 
   getCart() {
-    const db = getDB()
+    const db = getDB();
     const productIds = this.cart.items.map((item) => {
-      return item.productId
-    })
+      return item.productId;
+    });
     return db
       .collection('products')
       .find({ _id: { $in: productIds } })
@@ -59,52 +59,52 @@ class User {
           return {
             ...p,
             quantity: this.cart.items.find((i) => {
-              return i.productId.toString() === p._id.toString()
+              return i.productId.toString() === p._id.toString();
             }).quantity,
-          }
-        })
-      })
+          };
+        });
+      });
   }
 
   removeItemFromCart(productId) {
-    const db = getDB()
+    const db = getDB();
     const updatedCartItems = this.cart.items.filter((item) => {
-      return item.productId.toString() !== productId.toString()
-    })
+      return item.productId.toString() !== productId.toString();
+    });
     return db
       .collection('users')
       .updateOne(
         { _id: new ObjectId(this._id) },
         { $set: { cart: { items: updatedCartItems } } }
-      )
+      );
   }
 
   async createOrder() {
-    const db = getDB()
-    const products = await this.getCart()
+    const db = getDB();
+    const products = await this.getCart();
     const order = {
       items: products,
       user: {
         _id: new ObjectId(this._id),
         email: this.email,
       },
-    }
-    await db.collection('orders').insertOne(order)
+    };
+    await db.collection('orders').insertOne(order);
     await db
       .collection('users')
       .updateOne(
         { _id: new ObjectId(this._id) },
         { $set: { cart: { items: [] } } }
-      )
+      );
   }
 
   async getOrders() {
-    const db = getDB()
+    const db = getDB();
     return db
       .collection('orders')
       .find({ 'user._id': new ObjectId(this._id) })
-      .toArray()
+      .toArray();
   }
 }
 
-module.exports = User
+module.exports = User;
