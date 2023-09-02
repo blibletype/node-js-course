@@ -1,18 +1,22 @@
 extends ../layouts/main-layout.pug 
 
-block content
-    main 
-        if orders.length > 0
-            ul 
-                each order in orders
-                    li
-                        h1 Order № #{order._id}
-                        p List of products:
-                        ul 
+block content 
+    if orders.length > 0
+        div(class="accordion" id="accordionExample")
+            each order in orders
+                div(class="accordion-item")
+                    h2(class="accordion-header")
+                    button(class="accordion-button collapsed", type="button", data-bs-toggle="collapse", data-bs-target="#collapse" + order._id,  aria-expanded="true", aria-controls="collapse" + order._id)
+                        Accordion Order № #{order._id}
+                    div(id="collapse" + order._id, class="accordion-collapse collapse" data-bs-parent="#accordionExample")
+                        div(class="accordion-body")
                             each item in order.items
-                                li #{item.product.title} (#{item.quantity})
+                                h5 
+                                    | #{item.product.title} 
+                                    span(class="badge bg-secondary") #{item.quantity}
+     
+    else 
+        div(class="") There are no orders yet
 
-                        
-            
-        else 
-            div(class='text-3xl font-bold text-blue-500') There are no orders yet
+
+    

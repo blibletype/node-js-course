@@ -2,32 +2,30 @@ extends ../layouts/main-layout.pug
 
 block content 
     if items.length > 0
-        div(class="flex justify-center my-4")
-            div(class="container w-1/2 overflow-x-auto shadow-md sm:rounded-lg")
-                table(class="text-sm text-left text-gray-500 dark:text-gray-400 w-full")
-                    thead(class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400")
+        div(class="container-fluid d-flex justify-content-center")
+            div(class="w-50")
+                table(class="table table-hover ")
+                    thead(class="")
                         tr
-                            th(class="px-6 py-3") Title
-                            th(class="px-6 py-3") Price
-                            th(class="px-6 py-3") Quantity
-                            th(class="px-6 py-3") Total price
-                            th(class="px-6 py-3")
+                            th(class="") Title
+                            th(class="") Price
+                            th(class="") Quantity
+                            th(class="") Total price
+                            th(class="")
                     tbody 
                         each item in items
-                            tr(class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600")
-                                th(class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white") #{item.product.title}
-                                td(class="px-6 py-2") $#{item.product.price}
-                                td(class="px-6 py-2") #{item.quantity}
-                                td(class="px-6 py-2") $#{(item.quantity * item.product.price).toFixed(2)}
-                                td(class="px-6 py-2") 
-                                    form(action="/cart-remove-item" method="POST", class="px-6 py-2 text-right")
+                            tr(class="")
+                                th(class="") #{item.product.title}
+                                td(class="") $#{item.product.price}
+                                td(class="") #{item.quantity}
+                                td(class="") $#{(item.quantity * item.product.price).toFixed(2)}
+                                td(class="") 
+                                    form(action="/cart-remove-item" method="POST", class="")
                                         input(type="hidden", name="id", value=item.product._id)
-                                        button(type="submit", class="font-medium text-red-600 dark:text-red-500 hover:underline") Remove 
-
-        hr
-        div(class="flex justify-center my-2")    
-            form(action="/create-order", method="post") 
-                button(type="submit", class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded") Buy
+                                        button(type="submit", class="btn btn-danger btn-sm") Remove 
+                div(class="d-flex justify-content-end")
+                    form(action="/create-order", method="post") 
+                        button(type="submit", class="btn btn-primary") Buy
 
     else 
-        div(class='text-3xl font-bold text-blue-500') There are no items yet
+        div(class="") There are no items yet
