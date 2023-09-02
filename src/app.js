@@ -1,14 +1,13 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.set('view engine', 'pug');
 app.set('views', './src/views');
 
-const { mongoConnect } = require('./utils/database');
 const mongoose = require('mongoose');
 const User = require('./models/user');
 
@@ -20,10 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('64f1f01a9223eef6b99b8c23')
+  User.findById('64f355e3a55a23136d364c19')
     .then((user) => {
-      const { username, email, cart, _id } = user;
-      req.user = new User(username, email, cart, _id);
+      req.user = user || null;
       next();
     })
     .catch((err) => {
@@ -37,6 +35,13 @@ app.use(shopRoutes);
 app.use(errorController.pageNotFound);
 
 mongoose.connect(process.env.DB_URI).then(() => {
+  // User.create({
+  //   username: 'blibletype',
+  //   email: 'maxymkoval2510@gmail.com',
+  //   cart: {
+  //     items: [],
+  //   },
+  // });
   app.listen(PORT);
   console.log(`app listening at http://localhost:${PORT}`);
 });

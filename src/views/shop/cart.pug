@@ -1,7 +1,7 @@
 extends ../layouts/main-layout.pug 
 
 block content 
-    if products.length > 0
+    if items.length > 0
         div(class="flex justify-center my-4")
             div(class="container w-1/2 overflow-x-auto shadow-md sm:rounded-lg")
                 table(class="text-sm text-left text-gray-500 dark:text-gray-400 w-full")
@@ -13,15 +13,15 @@ block content
                             th(class="px-6 py-3") Total price
                             th(class="px-6 py-3")
                     tbody 
-                        each product in products
+                        each item in items
                             tr(class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600")
-                                th(class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white") #{product.title}
-                                td(class="px-6 py-2") $#{product.price}
-                                td(class="px-6 py-2") #{product.quantity}
-                                td(class="px-6 py-2") $#{(product.quantity * product.price).toFixed(2)}
+                                th(class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white") #{item.product.title}
+                                td(class="px-6 py-2") $#{item.product.price}
+                                td(class="px-6 py-2") #{item.quantity}
+                                td(class="px-6 py-2") $#{(item.quantity * item.product.price).toFixed(2)}
                                 td(class="px-6 py-2") 
                                     form(action="/cart-remove-item" method="POST", class="px-6 py-2 text-right")
-                                        input(type="hidden", name="id", value=product._id)
+                                        input(type="hidden", name="id", value=item.product._id)
                                         button(type="submit", class="font-medium text-red-600 dark:text-red-500 hover:underline") Remove 
 
         hr
@@ -30,4 +30,4 @@ block content
                 button(type="submit", class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded") Buy
 
     else 
-        div(class='text-3xl font-bold text-blue-500') There are no products yet
+        div(class='text-3xl font-bold text-blue-500') There are no items yet
