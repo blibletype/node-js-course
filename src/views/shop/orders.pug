@@ -1,7 +1,5 @@
 extends ../layouts/main-layout.pug 
-block styles 
-    link(rel="stylesheet", href="/css/main.css")
-    link(rel="stylesheet", href="/css/product.css")
+
 block content
     main 
         if orders.length > 0
@@ -17,4 +15,4 @@ block content
                         
             
         else 
-            h1 There are no orders yet
+            div(class='text-3xl font-bold text-blue-500') There are no orders yet

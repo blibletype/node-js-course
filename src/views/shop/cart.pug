@@ -1,22 +1,33 @@
 extends ../layouts/main-layout.pug 
-block styles 
-    link(rel="stylesheet", href="/css/main.css")
-    link(rel="stylesheet", href="/css/product.css")
-block content
-    main 
-        if products.length > 0
-            ul 
-                each product in products
-                    li
-                        p #{product.title} (#{product.quantity})
-                        form(action="/cart-remove-item" method="POST")
-                            input(type="hidden", name="id", value=product._id)
-                            button.btn(type="submit") Remove 
-            
-            hr
-            .centered 
-                form(action="/create-order", method="post") 
-                    button.btn(type="submit") Buy
 
-        else 
-            h1 There are no products yet
+block content 
+    if products.length > 0
+        div(class="flex justify-center my-4")
+            div(class="container w-1/2 overflow-x-auto shadow-md sm:rounded-lg")
+                table(class="text-sm text-left text-gray-500 dark:text-gray-400 w-full")
+                    thead(class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400")
+                        tr
+                            th(class="px-6 py-3") Title
+                            th(class="px-6 py-3") Price
+                            th(class="px-6 py-3") Quantity
+                            th(class="px-6 py-3") Total price
+                            th(class="px-6 py-3")
+                    tbody 
+                        each product in products
+                            tr(class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600")
+                                th(class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white") #{product.title}
+                                td(class="px-6 py-2") $#{product.price}
+                                td(class="px-6 py-2") #{product.quantity}
+                                td(class="px-6 py-2") $#{(product.quantity * product.price).toFixed(2)}
+                                td(class="px-6 py-2") 
+                                    form(action="/cart-remove-item" method="POST", class="px-6 py-2 text-right")
+                                        input(type="hidden", name="id", value=product._id)
+                                        button(type="submit", class="font-medium text-red-600 dark:text-red-500 hover:underline") Remove 
+
+        hr
+        div(class="flex justify-center my-2")    
+            form(action="/create-order", method="post") 
+                button(type="submit", class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded") Buy
+
+    else 
+        div(class='text-3xl font-bold text-blue-500') There are no products yet

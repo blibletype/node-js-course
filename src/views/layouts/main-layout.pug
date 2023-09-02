@@ -5,23 +5,25 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title #{docTitle}
-        block styles
+        link(rel="stylesheet", href="/css/styles.css")
     body
-        header.main-header
-            nav.main-header__nav
-                ul.main-header__item-list
-                    li.main-header__item
-                        a(href="/", class=(path === '/' ? 'active':'')) Home
-                    li.main-header__item
-                        a(href="/products", class=(path === '/products' ? 'active':'')) Products
-                    li.main-header__item
-                        a(href="/admin/add-product", class=(path === '/admin/add-product' ? 'active':'')) Add product
-                    li.main-header__item
-                        a(href="/cart", class=(path === '/cart' ? 'active':'')) Cart
-                    li.main-header__item
-                        a(href="/orders", class=(path === '/orders' ? 'active':'')) Orders
-                    li.main-header__item
-                        a(href="/admin/products", class=(path === '/admin/products' ? 'active':'')) Admin products
-                    
-        block content
+        header(class='top-0 left-0 h-9 w-screen')
+            nav(class='mt-3 ml-2')
+                ul(class='flex')
+                    li(class='mr-3')
+                        a(href="/", class='inline-block border rounded py-1 px-3 ' + (path === '/' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Home
+                    li(class='mr-3')
+                        a(href="/products", class='inline-block border rounded py-1 px-3 ' + (path === '/products' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Products
+                    li(class='mr-3')
+                        a(href="/admin/add-product", class='inline-block border rounded py-1 px-3 ' + (path === '/admin/add-product' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Add product
+                    li(class='mr-3')
+                        a(href="/cart", class='inline-block border rounded py-1 px-3 ' + (path === '/cart' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Cart
+                    li(class='mr-3')
+                        a(href="/orders", class='inline-block border rounded py-1 px-3 ' + (path === '/orders' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Orders
+                    li(class='mr-3')
+                        a(href="/admin/products", class='inline-block border rounded py-1 px-3 ' + (path === '/admin/products' ? 'border-blue-500 bg-blue-500 text-white':'border-white hover:border-gray-200 text-blue-500 hover:bg-gray-200')) Admin products
+        main(class='mx-2 mt-3')
+            hr          
+            block content
+            
         script(src="/js/main.js") 

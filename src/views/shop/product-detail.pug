@@ -1,21 +1,15 @@
 extends ../layouts/main-layout.pug
-block styles
-    link(rel="stylesheet", href="/css/main.css")
-    link(rel="stylesheet", href="/css/product.css")
 
 block content 
-    main
-        .grid 
-            article.card.product-item
-                header.card__header
-                    h1.product__title #{product.title}
-                .card__image
-                    img(src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png", alt="A Book")
-                .card__content
-                    h2.product__price $#{product.price}
-                    p.product__description #{product.description}
-                .card__actions
-                    form(action="/cart", method="post")
-                        button.btn(type="submit") Add to cart
-                        input(type="hidden", name="id", value=`${product._id}`)
-        
+    div(class='grid grid-flow-col auto-cols-max justify-center')
+        article(class='rounded-lg shadow-lg w-80 m-3')
+            img(src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png", alt="", class="block h-auto w-full") 
+            header(class="flex items-center justify-between leading-tight p-2 md:p-4")
+                h1(class="text-lg") #{product.title}
+                p(class="text-grey-darker text-sm") $#{product.price}
+            div(class="flex items-start pl-4")
+                p.product__description #{product.description}
+            footer(class="flex items-center justify-between leading-none p-2 md:p-4")
+                form(action="/cart", method="post")
+                    input(type="hidden", name="id", value=product._id) 
+                    button(type="submit", class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded") Add to cart
