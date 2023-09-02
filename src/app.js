@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -35,11 +36,7 @@ app.use(shopRoutes);
 
 app.use(errorController.pageNotFound);
 
-mongoose
-  .connect(
-    'mongodb+srv://max:123456789000@node-course.ooytjw9.mongodb.net/shop?retryWrites=true&w=majority'
-  )
-  .then(() => {
-    app.listen(PORT);
-    console.log(`app listening at http://localhost:${PORT}`);
-  });
+mongoose.connect(process.env.DB_URI).then(() => {
+  app.listen(PORT);
+  console.log(`app listening at http://localhost:${PORT}`);
+});
