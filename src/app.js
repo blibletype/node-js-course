@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const path = require('path');
-
 const csrf = require('csurf')();
+const flash = require('connect-flash');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -37,6 +37,7 @@ app.use(
   })
 );
 app.use(csrf);
+app.use(flash());
 
 app.use(async (req, res, next) => {
   try {

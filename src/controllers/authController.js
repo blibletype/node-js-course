@@ -1,6 +1,17 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 
+const { createTransport } = require('nodemailer');
+
+const transporter = createTransport({
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  auth: {
+    user: 'maxymkoval2510@gmail.com',
+    pass: 'kXDnrqjsZ2Bfc5gC',
+  },
+});
+
 exports.getSignIn = (req, res) => {
   res.render('auth/sign-in', {
     docTitle: 'Sign In',
@@ -35,6 +46,7 @@ exports.getSignUp = async (req, res) => {
   res.render('auth/sign-up', {
     docTitle: 'Sign Up',
     path: '/signup',
+    errorMessage: req.flash('error'),
   });
 };
 
@@ -42,13 +54,25 @@ exports.postSignUp = async (req, res) => {
   const { email, password, passwordConfirmation } = req.body;
   try {
     const user = await User.findOne({ email: email });
-    if (user) return res.redirect('/signup');
-
+    if (user) {
+      req.flash('error', 'This email already exist. Try to sign in');
+      return res.redirect('/signup');
+    }
     const hashedPassword = await bcrypt.hash(password, 12);
     await User.create({
       email: email,
       password: hashedPassword,
       cart: { items: [] },
+    });
+    //TODO: Refactor sending emails
+    const mailOptions = {
+      from: 'maxymkoval2510@gmail.com',
+      to: email,
+      subject: `Welcome`,
+      text: `Successfully signed up!`,
+    };
+    transporter.sendMail(mailOptions, (err) => {
+      console.log(err);
     });
     res.redirect('/signin');
   } catch (err) {

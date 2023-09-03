@@ -3,6 +3,8 @@ extends ../layouts/main-layout.pug
 block content
     div(class="d-flex justify-content-center")
         form(action="/signup" method="POST")
+            if errorMessage 
+                div(class="mb-2") #{errorMessage}
             div(class="mb-2")
                 label(for="email" class="form-label") email
                 input(type="text" name="email" id="email" class="form-control")
