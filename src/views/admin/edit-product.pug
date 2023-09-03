@@ -18,6 +18,7 @@ block content
             if editing === "true"
                 input(type="hidden", value=(product._id), name="id") 
             div(class="")
+                input(type="hidden", name="_csrf", value=csrfToken)
                 button(type="submit", class="btn btn-primary") #{editing === "true" ? "Update Product" : "Add Product"}  
             
 

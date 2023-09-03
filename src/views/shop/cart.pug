@@ -22,9 +22,11 @@ block content
                                 td(class="") 
                                     form(action="/cart-remove-item" method="POST", class="")
                                         input(type="hidden", name="id", value=item.product._id)
+                                        input(type="hidden", name="_csrf", value=csrfToken)
                                         button(type="submit", class="btn btn-danger btn-sm") Remove 
                 div(class="d-flex justify-content-end")
                     form(action="/create-order", method="post") 
+                        input(type="hidden", name="_csrf", value=csrfToken)
                         button(type="submit", class="btn btn-primary") Buy
 
     else 

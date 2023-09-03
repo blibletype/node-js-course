@@ -5,7 +5,6 @@ exports.getIndex = (req, res) => {
   res.render('shop/index', {
     docTitle: 'Home',
     path: '/',
-    isAuth: req.session.user,
   });
 };
 
@@ -16,7 +15,6 @@ exports.getProducts = (req, res) => {
         products: products,
         docTitle: 'Shop',
         path: '/products',
-        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -32,7 +30,6 @@ exports.getProduct = (req, res) => {
         docTitle: product.title,
         product: product,
         path: '/products',
-        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -46,7 +43,6 @@ exports.getCart = (req, res) => {
       items: user.cart.items,
       docTitle: 'Cart',
       path: '/cart',
-      isAuth: req.session.user,
     });
   });
 };
@@ -85,7 +81,6 @@ exports.getOrders = (req, res) => {
         docTitle: 'Orders',
         path: '/orders',
         orders: orders,
-        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -114,6 +109,5 @@ exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
     docTitle: 'Checkout',
     path: '/checkout',
-    isAuth: req.session.user,
   });
 };

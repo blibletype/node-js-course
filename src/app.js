@@ -5,6 +5,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const path = require('path');
 
+const csrf = require('csurf')();
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -34,6 +36,7 @@ app.use(
     store: store,
   })
 );
+app.use(csrf);
 
 app.use(async (req, res, next) => {
   try {
@@ -44,6 +47,12 @@ app.use(async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuth = req.session.user;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use('/admin', adminRoutes);

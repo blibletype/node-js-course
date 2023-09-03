@@ -13,5 +13,6 @@ block content
                 label(for="passwordConfirmation" class="form-label") confirm password
                 input(type="password" name="passwordConfirmation" id="passwordConfirmation" class="form-control")
             div(class="mb-2")
+                input(type="hidden", name="_csrf", value=csrfToken)
                 button(type="submit" class="btn btn-primary") Sign Up  
             

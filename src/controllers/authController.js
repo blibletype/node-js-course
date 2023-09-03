@@ -5,7 +5,6 @@ exports.getSignIn = (req, res) => {
   res.render('auth/sign-in', {
     docTitle: 'Sign In',
     path: '/signin',
-    isAuth: req.session.user,
   });
 };
 
@@ -36,7 +35,6 @@ exports.getSignUp = async (req, res) => {
   res.render('auth/sign-up', {
     docTitle: 'Sign Up',
     path: '/signup',
-    isAuth: req.session.user,
   });
 };
 

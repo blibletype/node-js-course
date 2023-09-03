@@ -28,6 +28,7 @@ html(lang="en")
                             li(class='nav-item')
                                 a(href="/admin/products", class="nav-link " + (path === "/admin/products" ? "active":"")) Admin products
                             form(action="/signout", method="post", class="nav-item") 
+                                input(type="hidden", name="_csrf", value=csrfToken)
                                 button(type="submit", class="nav-link") Sign Out
                         else
                             li(class="nav-item")
