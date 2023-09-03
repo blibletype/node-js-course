@@ -1,0 +1,14 @@
+extends ../layouts/main-layout.pug 
+
+block content
+    div(class="d-flex justify-content-center")
+        form(action="/signin" method="POST")
+            div(class="mb-2")
+                label(for="email" class="form-label") email
+                input(type="text" name="email" id="email" class="form-control")
+            div(class="mb-2")
+                label(for="password" class="form-label") password
+                input(type="text" name="password" id="password" class="form-control")
+            div(class="")
+                button(type="submit" class="btn btn-primary") Sign in  
+            

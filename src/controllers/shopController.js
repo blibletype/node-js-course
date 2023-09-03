@@ -5,6 +5,7 @@ exports.getIndex = (req, res) => {
   res.render('shop/index', {
     docTitle: 'Home',
     path: '/',
+    isAuth: req.session.user,
   });
 };
 
@@ -15,6 +16,7 @@ exports.getProducts = (req, res) => {
         products: products,
         docTitle: 'Shop',
         path: '/products',
+        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -30,6 +32,7 @@ exports.getProduct = (req, res) => {
         docTitle: product.title,
         product: product,
         path: '/products',
+        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -38,11 +41,13 @@ exports.getProduct = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  req.user.populate('cart.items.product').then((user) => {
+  console.log();
+  req.session.user.populate('cart.items.product').then((user) => {
     res.render('shop/cart', {
       items: user.cart.items,
       docTitle: 'Cart',
       path: '/cart',
+      isAuth: req.session.user,
     });
   });
 };
@@ -51,7 +56,7 @@ exports.postCart = (req, res) => {
   const { id } = req.body;
   Product.findById(id)
     .then((product) => {
-      return req.user.addToCart(product);
+      return req.session.user.addToCart(product);
     })
     .then((result) => {
       res.redirect('/cart');
@@ -63,7 +68,7 @@ exports.postCart = (req, res) => {
 
 exports.postRemoveCartItem = (req, res) => {
   const { id } = req.body;
-  req.user
+  req.session.user
     .removeItemFromCart(id)
     .then(() => {
       res.redirect('/cart');
@@ -74,13 +79,14 @@ exports.postRemoveCartItem = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  Order.find({ user: req.user })
+  Order.find({ user: req.session.user })
     .populate('items.product')
     .then((orders) => {
       res.render('shop/orders', {
         docTitle: 'Orders',
         path: '/orders',
         orders: orders,
+        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -90,11 +96,11 @@ exports.getOrders = (req, res) => {
 
 exports.postOrder = (req, res) => {
   Order.create({
-    items: req.user.cart.items,
-    user: req.user,
+    items: req.session.user.cart.items,
+    user: req.session.user,
   })
     .then(() => {
-      req.user.cart.items = [];
+      req.session.user.cart.items = [];
       return req.user.save();
     })
     .then(() => {
@@ -109,5 +115,6 @@ exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
     docTitle: 'Checkout',
     path: '/checkout',
+    isAuth: req.session.user,
   });
 };
