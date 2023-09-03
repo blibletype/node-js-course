@@ -5,6 +5,7 @@ exports.getAddProduct = (req, res) => {
     docTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    isAuth: req.session.user,
   });
 };
 
@@ -15,7 +16,7 @@ exports.postAddProduct = async (req, res) => {
     price: price,
     imageUrl: imageUrl,
     description: description,
-    userId: req.user,
+    userId: req.session.user,
   })
     .then(() => {
       res.redirect('/products');
@@ -37,6 +38,7 @@ exports.getEditProduct = (req, res) => {
         path: '/admin/edit-product',
         editing: editMode,
         product: product,
+        isAuth: req.session.user,
       });
     })
     .catch((err) => {
@@ -81,6 +83,7 @@ exports.getProducts = (req, res) => {
         products: products,
         docTitle: 'Products',
         path: '/admin/products',
+        isAuth: req.session.user,
       });
     })
     .catch((err) => {

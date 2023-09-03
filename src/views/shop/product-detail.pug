@@ -9,6 +9,7 @@ block content
                 h6(class="card-subtitle mb-2 text-body-secondary") $#{product.price}
                 p(class="card-text") #{product.description}
             div(class="card-body d-flex justify-content-between")
-                form(action="/cart", method="post")
-                    input(type="hidden", name="id", value=product._id) 
-                    button(type="submit", class="btn btn-primary") Add to cart
+                if isAuth
+                    form(action="/cart", method="post")
+                        input(type="hidden", name="id", value=product._id) 
+                        button(type="submit", class="btn btn-primary") Add to cart
