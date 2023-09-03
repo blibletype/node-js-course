@@ -1,4 +1,2 @@
 node_modules/
 .env
-src/tailwind.css
-tailwind.config.js
