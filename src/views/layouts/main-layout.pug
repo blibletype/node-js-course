@@ -32,6 +32,8 @@ html(lang="en")
                         else
                             li(class="nav-item")
                                 a(href="/signin", class="nav-link " + (path === "/signin" ? "active":"")) Sign In
+                            li(class="nav-item")
+                                a(href="/signup", class="nav-link " + (path === "/signup" ? "active":"")) Sign Up
         main(class="mx-2 mt-3")
             hr          
             block content

@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 exports.getSignIn = (req, res) => {
   res.render('auth/sign-in', {
@@ -13,6 +14,8 @@ exports.postSignIn = async (req, res) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) return res.redirect('/');
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) return res.redirect('/');
     req.session.user = user;
     req.session.save(() => {
       res.redirect('/products');
@@ -27,4 +30,30 @@ exports.postSignOut = async (req, res) => {
     if (err) console.log(err);
     res.redirect('/');
   });
+};
+
+exports.getSignUp = async (req, res) => {
+  res.render('auth/sign-up', {
+    docTitle: 'Sign Up',
+    path: '/signup',
+    isAuth: req.session.user,
+  });
+};
+
+exports.postSignUp = async (req, res) => {
+  const { email, password, passwordConfirmation } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    if (user) return res.redirect('/signup');
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    await User.create({
+      email: email,
+      password: hashedPassword,
+      cart: { items: [] },
+    });
+    res.redirect('/signin');
+  } catch (err) {
+    console.log(err);
+  }
 };
