@@ -17,6 +17,7 @@ app.set('view engine', 'pug');
 app.set('views', './src/views');
 
 const mongoose = require('mongoose');
+const User = require('./models/user');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -33,6 +34,17 @@ app.use(
     store: store,
   })
 );
+
+app.use(async (req, res, next) => {
+  try {
+    if (!req.session.user) return next();
+    const user = await User.findById(req.session.user._id);
+    req.user = user;
+    next();
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);

@@ -16,18 +16,22 @@ html(lang="en")
                             a(href="/", class="nav-link " + (path === "/" ? "active":"")) Home
                         li(class="nav-item")
                             a(href="/products", class="nav-link " + (path === "/products" ? "active":"")) Products
-                        li(class="nav-item")
-                            a(href="/cart", class="nav-link " + (path === "/cart" ? "active":"")) Cart
-                        li(class="nav-item")
-                            a(href="/orders", class="nav-link " + (path === "/orders" ? "active":"")) Orders   
+                        if isAuth
+                            li(class="nav-item")
+                                a(href="/cart", class="nav-link " + (path === "/cart" ? "active":"")) Cart
+                            li(class="nav-item")
+                                a(href="/orders", class="nav-link " + (path === "/orders" ? "active":"")) Orders   
                     ul(class="nav nav-underline")
                         if isAuth
                             li(class="nav-item")
                                 a(href="/admin/add-product", class="nav-link " + (path === "/admin/add-product" ? "active":"")) Add product
                             li(class='nav-item')
                                 a(href="/admin/products", class="nav-link " + (path === "/admin/products" ? "active":"")) Admin products
-                        li(class="nav-item")
-                            a(href="/signin", class="nav-link " + (path === "/signin" ? "active":"")) Sign In
+                            form(action="/signout", method="post", class="nav-item") 
+                                button(type="submit", class="nav-link") Sign Out
+                        else
+                            li(class="nav-item")
+                                a(href="/signin", class="nav-link " + (path === "/signin" ? "active":"")) Sign In
         main(class="mx-2 mt-3")
             hr          
             block content

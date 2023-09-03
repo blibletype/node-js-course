@@ -42,7 +42,7 @@ exports.getProduct = (req, res) => {
 
 exports.getCart = (req, res) => {
   console.log();
-  req.session.user.populate('cart.items.product').then((user) => {
+  req.user.populate('cart.items.product').then((user) => {
     res.render('shop/cart', {
       items: user.cart.items,
       docTitle: 'Cart',
@@ -56,7 +56,7 @@ exports.postCart = (req, res) => {
   const { id } = req.body;
   Product.findById(id)
     .then((product) => {
-      return req.session.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then((result) => {
       res.redirect('/cart');
@@ -68,7 +68,7 @@ exports.postCart = (req, res) => {
 
 exports.postRemoveCartItem = (req, res) => {
   const { id } = req.body;
-  req.session.user
+  req.user
     .removeItemFromCart(id)
     .then(() => {
       res.redirect('/cart');
@@ -96,11 +96,11 @@ exports.getOrders = (req, res) => {
 
 exports.postOrder = (req, res) => {
   Order.create({
-    items: req.session.user.cart.items,
-    user: req.session.user,
+    items: req.user.cart.items,
+    user: req.user,
   })
     .then(() => {
-      req.session.user.cart.items = [];
+      req.user.cart.items = [];
       return req.user.save();
     })
     .then(() => {
