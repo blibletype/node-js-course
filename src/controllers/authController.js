@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const transporter = require('../utils/nodemailer');
 
@@ -69,5 +70,90 @@ exports.postSignUp = async (req, res) => {
     res.redirect('/signin');
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.getReset = async (req, res) => {
+  res.render('auth/reset-password', {
+    docTitle: 'Reset password',
+    path: '/reset',
+    errorMessage: req.flash('error'),
+  });
+};
+
+exports.postReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      req.flash('error', 'No account with that email found');
+      return res.redirect('/reset');
+    }
+    crypto.randomBytes(32, async (error, buffer) => {
+      if (error) return console.error(error);
+      const token = buffer.toString('hex');
+      user.resetToken = token;
+      user.resetTokenExpirationDate = Date.now() + 3600000;
+      await user.save();
+      res.redirect('/');
+      transporter.sendMail({
+        from: process.env.MAILER_USER,
+        to: email,
+        subject: 'Reseting password',
+        text: `
+          <p>Hello! You requested a password reset</p>
+          <p>CLick this link below to set a new password</p>
+          <a href="http://localhost:3000/reset/${token}">reset</a>
+        `,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.getNewPassword = async (req, res) => {
+  const { token } = req.params;
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpirationDate: { $gt: Date.now() },
+    });
+    if (!user) {
+      req.flash('error', 'Token has been expired');
+      return res.redirect('/');
+    }
+    res.render('auth/new-password', {
+      docTitle: 'New password',
+      path: '/new-password',
+      errorMessage: req.flash('error'),
+      userId: user._id.toString(),
+      resetToken: token,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.postNewPassword = async (req, res) => {
+  const { password, userId, resetToken } = req.body;
+  try {
+    const user = await User.findOne({
+      resetToken: resetToken,
+      resetTokenExpirationDate: { $gt: Date.now() },
+      _id: userId,
+    });
+    if (!user) {
+      req.flash('error', 'Token has been expired');
+      return res.redirect('/');
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpirationDate = undefined;
+    await user.save();
+    res.redirect('/signin');
+  } catch (error) {
+    console.error(error);
   }
 };
