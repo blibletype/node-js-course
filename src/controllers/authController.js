@@ -12,8 +12,8 @@ exports.getSignIn = (req, res) => {
 };
 
 exports.postSignIn = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
     const user = await User.findOne({ email: email });
     if (!user) return res.redirect('/');
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -43,8 +43,8 @@ exports.getSignUp = async (req, res) => {
 };
 
 exports.postSignUp = async (req, res) => {
-  const { email, password, passwordConfirmation } = req.body;
   try {
+    const { email, password, passwordConfirmation } = req.body;
     const user = await User.findOne({ email: email });
     if (user) {
       req.flash('error', 'This email already exist. Try to sign in');
@@ -82,8 +82,8 @@ exports.getReset = async (req, res) => {
 };
 
 exports.postReset = async (req, res) => {
-  const { email } = req.body;
   try {
+    const { email } = req.body;
     const user = await User.findOne({ email: email });
     if (!user) {
       req.flash('error', 'No account with that email found');
@@ -113,8 +113,8 @@ exports.postReset = async (req, res) => {
 };
 
 exports.getNewPassword = async (req, res) => {
-  const { token } = req.params;
   try {
+    const { token } = req.params;
     const user = await User.findOne({
       resetToken: token,
       resetTokenExpirationDate: { $gt: Date.now() },
@@ -136,8 +136,8 @@ exports.getNewPassword = async (req, res) => {
 };
 
 exports.postNewPassword = async (req, res) => {
-  const { password, userId, resetToken } = req.body;
   try {
+    const { password, userId, resetToken } = req.body;
     const user = await User.findOne({
       resetToken: resetToken,
       resetTokenExpirationDate: { $gt: Date.now() },
