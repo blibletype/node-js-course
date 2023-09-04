@@ -15,6 +15,7 @@ block content
                             div(class="card-body d-flex justify-content-between")
                                 a(href="/admin/edit-product/" + product._id + "?edit=true", class="btn btn-success") Edit
                                 form(action="/admin/delete-product", method="post")
+                                    input(type="hidden", name="_csrf", value=csrfToken)
                                     input(type="hidden", name="id", value=product._id) 
                                     button(type="submit", class="btn btn-danger") Delete
                                 

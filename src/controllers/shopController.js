@@ -5,116 +5,101 @@ exports.getIndex = (req, res) => {
   res.render('shop/index', {
     docTitle: 'Home',
     path: '/',
-    isAuth: req.session.user,
   });
 };
 
-exports.getProducts = (req, res) => {
-  Product.find()
-    .then((products) => {
-      res.render('shop/products', {
-        products: products,
-        docTitle: 'Shop',
-        path: '/products',
-        isAuth: req.session.user,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.render('shop/products', {
+      products: products,
+      docTitle: 'Shop',
+      path: '/products',
     });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.getProduct = (req, res) => {
-  const { id } = req.params;
-  Product.findById(id)
-    .then((product) => {
-      res.render('shop/product-detail', {
-        docTitle: product.title,
-        product: product,
-        path: '/products',
-        isAuth: req.session.user,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+exports.getProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    res.render('shop/product-detail', {
+      docTitle: product.title,
+      product: product,
+      path: '/products',
     });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.getCart = (req, res) => {
-  console.log();
-  req.user.populate('cart.items.product').then((user) => {
+exports.getCart = async (req, res) => {
+  try {
+    const user = await req.user.populate('cart.items.product');
     res.render('shop/cart', {
       items: user.cart.items,
       docTitle: 'Cart',
       path: '/cart',
-      isAuth: req.session.user,
     });
-  });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.postCart = (req, res) => {
-  const { id } = req.body;
-  Product.findById(id)
-    .then((product) => {
-      return req.user.addToCart(product);
-    })
-    .then((result) => {
-      res.redirect('/cart');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.postCart = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const product = await Product.findById(id);
+    await req.user.addToCart(product);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.postRemoveCartItem = (req, res) => {
-  const { id } = req.body;
-  req.user
-    .removeItemFromCart(id)
-    .then(() => {
-      res.redirect('/cart');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+exports.postRemoveCartItem = async (req, res) => {
+  try {
+    const { id } = req.body;
+    await req.user.removeItemFromCart(id);
+    res.redirect('/cart');
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.getOrders = (req, res) => {
-  Order.find({ user: req.session.user })
-    .populate('items.product')
-    .then((orders) => {
-      res.render('shop/orders', {
-        docTitle: 'Orders',
-        path: '/orders',
-        orders: orders,
-        isAuth: req.session.user,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+exports.getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.session.user }).populate(
+      'items.product'
+    );
+    res.render('shop/orders', {
+      docTitle: 'Orders',
+      path: '/orders',
+      orders: orders,
     });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-exports.postOrder = (req, res) => {
-  Order.create({
-    items: req.user.cart.items,
-    user: req.user,
-  })
-    .then(() => {
-      req.user.cart.items = [];
-      return req.user.save();
-    })
-    .then(() => {
-      res.redirect('/orders');
-    })
-    .catch((err) => {
-      console.log(err);
+exports.postOrder = async (req, res) => {
+  try {
+    await Order.create({
+      items: req.user.cart.items,
+      user: req.user,
     });
+    req.user.cart.items = [];
+    await req.user.save();
+    res.redirect('/orders');
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
     docTitle: 'Checkout',
     path: '/checkout',
-    isAuth: req.session.user,
   });
 };

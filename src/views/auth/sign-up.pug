@@ -2,7 +2,7 @@ extends ../layouts/main-layout.pug
 
 block content
     div(class="d-flex justify-content-center")
-        form(action="/signin" method="POST")
+        form(action="/signup" method="POST")
             if errorMessage 
                 div(class="mb-2") #{errorMessage}
             div(class="mb-2")
@@ -11,8 +11,10 @@ block content
             div(class="mb-2")
                 label(for="password" class="form-label") password
                 input(type="password" name="password" id="password" class="form-control")
-            div(class="")
-                input(type="hidden" name="_csrf" value=csrfToken)
-                button(type="submit" class="btn btn-primary") Sign in  
-                a(href="/reset" class="btn btn-link") Forgot password? 
+            div(class="mb-2")
+                label(for="passwordConfirmation" class="form-label") confirm password
+                input(type="password" name="passwordConfirmation" id="passwordConfirmation" class="form-control")
+            div(class="mb-2")
+                input(type="hidden", name="_csrf", value=csrfToken)
+                button(type="submit" class="btn btn-primary") Sign Up  
             
