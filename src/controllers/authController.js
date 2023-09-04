@@ -1,16 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 
-const { createTransport } = require('nodemailer');
-
-const transporter = createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  auth: {
-    user: 'maxymkoval2510@gmail.com',
-    pass: 'kXDnrqjsZ2Bfc5gC',
-  },
-});
+const transporter = require('../utils/nodemailer');
 
 exports.getSignIn = (req, res) => {
   res.render('auth/sign-in', {
@@ -64,9 +55,9 @@ exports.postSignUp = async (req, res) => {
       password: hashedPassword,
       cart: { items: [] },
     });
-    //TODO: Refactor sending emails
+
     const mailOptions = {
-      from: 'maxymkoval2510@gmail.com',
+      from: process.env.MAILER_USER,
       to: email,
       subject: `Welcome`,
       text: `Successfully signed up!`,
@@ -74,6 +65,7 @@ exports.postSignUp = async (req, res) => {
     transporter.sendMail(mailOptions, (err) => {
       console.log(err);
     });
+
     res.redirect('/signin');
   } catch (err) {
     console.log(err);
