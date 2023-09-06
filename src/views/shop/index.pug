@@ -1,4 +1,7 @@
 extends ../layouts/main-layout.pug 
 
 block content
+    if successMessage.length > 0
+        div(class="alert alert-success" role="alert") #{successMessage}
+            
     h1 Home

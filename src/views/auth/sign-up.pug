@@ -2,18 +2,19 @@ extends ../layouts/main-layout.pug
 
 block content
     div(class="d-flex justify-content-center")
-        form(action="/signup" method="POST")
-            if errorMessage 
-                div(class="mb-2") #{errorMessage}
+        form(action="/signup" method="POST" novalidate)
             div(class="mb-2")
                 label(for="email" class="form-label") email
-                input(type="text" name="email" id="email" class="form-control")
+                input(type="email" name="email" id="email" value=oldInputs ? oldInputs.email : '' class=`form-control ${errors && errors.find(error => error.path === 'email') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Please enter valid email   
             div(class="mb-2")
                 label(for="password" class="form-label") password
-                input(type="password" name="password" id="password" class="form-control")
+                input(type="password" name="password" id="password" value=oldInputs ? oldInputs.password : '' class=`form-control ${errors && errors.find(error => error.path === 'password') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Your password should be at least 8 characters long
             div(class="mb-2")
                 label(for="passwordConfirmation" class="form-label") confirm password
-                input(type="password" name="passwordConfirmation" id="passwordConfirmation" class="form-control")
+                input(type="password" name="passwordConfirmation" id="passwordConfirmation" class=`form-control ${errors && errors.find(error => error.path === 'passwordConfirmation') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Passwords have to match
             div(class="mb-2")
                 input(type="hidden", name="_csrf", value=csrfToken)
                 button(type="submit" class="btn btn-primary") Sign Up  

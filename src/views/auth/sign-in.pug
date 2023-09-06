@@ -1,16 +1,20 @@
 extends ../layouts/main-layout.pug 
 
 block content
+    if errorMessage && errorMessage.length > 0
+        div(class="alert alert-danger" role="alert") #{errorMessage}
+    if successMessage && successMessage.length > 0
+        div(class="alert alert-success" role="alert") #{successMessage}
     div(class="d-flex justify-content-center")
         form(action="/signin" method="POST")
-            if errorMessage 
-                div(class="mb-2") #{errorMessage}
             div(class="mb-2")
                 label(for="email" class="form-label") email
-                input(type="text" name="email" id="email" class="form-control")
+                input(type="email" name="email" id="email" value=oldInputs ? oldInputs.email : '' class=`form-control ${errors && errors.find(error => error.path === 'email') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Please enter valid email  
             div(class="mb-2")
                 label(for="password" class="form-label") password
-                input(type="password" name="password" id="password" class="form-control")
+                input(type="password" name="password" id="password" class=`form-control ${errors && errors.find(error => error.path === 'email') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Please enter valid password
             div(class="")
                 input(type="hidden" name="_csrf" value=csrfToken)
                 button(type="submit" class="btn btn-primary") Sign in  
