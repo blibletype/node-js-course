@@ -5,16 +5,20 @@ block content
         form(action=(editing === "true" ? "/admin/edit-product" : "/admin/add-product"), method="POST")
             div(class="mb-2")
                 label(for="title", class="form-label") Title
-                input(type="text", name="title", id="title", value=(editing === "true" ? product.title : ""), class="form-control")
+                input(type="text", name="title", id="title", value=(editing === "true" ? product.title : (oldInputs && oldInputs.title) || ""), class=`form-control ${errors && errors.find(error => error.path === 'title') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Title should be at least 2 characters long, max: 30
             div(class="mb-2")
                 label(for="title", class="form-label") Price
-                input(type="number" name="price" id="price" step="0.01", value=(editing === "true" ? product.price : ""), class="form-control")
+                input(type="number" name="price" id="price" step="0.01", value=(editing === "true" ? product.price : (oldInputs && oldInputs.price) || ""), class=`form-control ${errors && errors.find(error => error.path === 'price') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Price should be a number
             div(class="mb-2")
                 label(for="title", class="form-label") Image Url
-                input(type="text", name="imageUrl", id="imageUrl", value=(editing === "true" ? product.imageUrl : ""), class="form-control")
+                input(type="text", name="imageUrl", id="imageUrl", value=(editing === "true" ? product.imageUrl : (oldInputs && oldInputs.imageUrl) || ""), class=`form-control ${errors && errors.find(error => error.path === 'imageUrl') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") Please enter valid URL
             div(class="mb-2")
                 label(for="title", class="form-label") Description
-                textarea(name="description", id="description", rows="5", class="form-control") #{editing === "true" ? product.description : ""}
+                textarea(name="description", id="description", rows="5", class=`form-control ${errors && errors.find(error => error.path === 'description') ? 'is-invalid' : ''}`) #{editing === "true" ? product.description : (oldInputs && oldInputs.description) || ""}
+                div(class="invalid-feedback") Description should be at least 2 characters long
             if editing === "true"
                 input(type="hidden", value=(product._id), name="id") 
             div(class="")

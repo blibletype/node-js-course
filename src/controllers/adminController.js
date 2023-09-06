@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const { validationResult } = require('express-validator');
 
 exports.getAddProduct = (req, res) => {
   res.render('admin/edit-product', {
@@ -12,6 +13,21 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = async (req, res) => {
   try {
     const { title, price, description, imageUrl } = req.body;
+    const errors = validationResult(req).array() || [];
+    if (errors.length > 0) {
+      return res.status(422).render('admin/edit-product', {
+        docTitle: 'Add Product',
+        path: '/admin/add-product',
+        errors: errors,
+        editing: 'false',
+        oldInputs: {
+          title: title,
+          price: price,
+          description: description,
+          imageUrl: imageUrl,
+        },
+      });
+    }
     await Product.create({
       title: title,
       price: price,
@@ -51,6 +67,16 @@ exports.postEditProduct = async (req, res) => {
     if (product.userId.toString() !== req.session.user._id.toString()) {
       req.flash('error', "You don't have enough permissions");
       return res.redirect('/admin/products');
+    }
+    const errors = validationResult(req).array() || [];
+    if (errors.length > 0) {
+      return res.status(422).render('admin/edit-product', {
+        docTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        errors: errors,
+        editing: 'true',
+        product: product,
+      });
     }
     product.title = title;
     product.price = price;
