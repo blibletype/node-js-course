@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 
 const transporter = require('../utils/nodemailer');
 
-exports.getSignIn = (req, res) => {
+exports.getSignIn = (req, res, next) => {
   res.render('auth/sign-in', {
     docTitle: 'Sign In',
     path: '/signin',
@@ -14,7 +14,7 @@ exports.getSignIn = (req, res) => {
   });
 };
 
-exports.postSignIn = async (req, res) => {
+exports.postSignIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const errors = validationResult(req).array() || [];
@@ -37,19 +37,19 @@ exports.postSignIn = async (req, res) => {
     req.session.save(() => {
       res.redirect('/products');
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    return next(error);
   }
 };
 
-exports.postSignOut = async (req, res) => {
+exports.postSignOut = async (req, res, next) => {
   req.session.destroy((err) => {
     if (err) console.log(err);
     res.redirect('/');
   });
 };
 
-exports.getSignUp = async (req, res) => {
+exports.getSignUp = async (req, res, next) => {
   res.render('auth/sign-up', {
     docTitle: 'Sign Up',
     path: '/signup',
@@ -57,7 +57,7 @@ exports.getSignUp = async (req, res) => {
   });
 };
 
-exports.postSignUp = async (req, res) => {
+exports.postSignUp = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const errors = validationResult(req).array() || [];
@@ -89,19 +89,19 @@ exports.postSignUp = async (req, res) => {
       console.log(err);
     });
     res.redirect('/signin');
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    return next(error);
   }
 };
 
-exports.getReset = async (req, res) => {
+exports.getReset = async (req, res, next) => {
   res.render('auth/reset-password', {
     docTitle: 'Reset password',
     path: '/reset',
   });
 };
 
-exports.postReset = async (req, res) => {
+exports.postReset = async (req, res, next) => {
   try {
     const { email } = req.body;
     const errors = validationResult(req).array() || [];
@@ -140,12 +140,12 @@ exports.postReset = async (req, res) => {
         `,
       });
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    return next(error);
   }
 };
 
-exports.getNewPassword = async (req, res) => {
+exports.getNewPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
     const user = await User.findOne({
@@ -163,11 +163,11 @@ exports.getNewPassword = async (req, res) => {
       resetToken: token,
     });
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };
 
-exports.postNewPassword = async (req, res) => {
+exports.postNewPassword = async (req, res, next) => {
   try {
     const { password, userId, resetToken } = req.body;
     const user = await User.findOne({
@@ -196,6 +196,6 @@ exports.postNewPassword = async (req, res) => {
     req.flash('success', 'You successfully changed the password');
     res.redirect('/signin');
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };

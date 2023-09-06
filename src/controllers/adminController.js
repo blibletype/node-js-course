@@ -1,16 +1,16 @@
 const Product = require('../models/product');
 const { validationResult } = require('express-validator');
 
-exports.getAddProduct = (req, res) => {
+exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     docTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false,
+    editing: 'false',
     isAuth: req.session.user,
   });
 };
 
-exports.postAddProduct = async (req, res) => {
+exports.postAddProduct = async (req, res, next) => {
   try {
     const { title, price, description, imageUrl } = req.body;
     const errors = validationResult(req).array() || [];
@@ -37,11 +37,11 @@ exports.postAddProduct = async (req, res) => {
     });
     res.redirect('/products');
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };
 
-exports.getEditProduct = async (req, res) => {
+exports.getEditProduct = async (req, res, next) => {
   try {
     const editMode = req.query.edit;
     if (!editMode) return res.redirect('/');
@@ -56,11 +56,11 @@ exports.getEditProduct = async (req, res) => {
       isAuth: req.session.user,
     });
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };
 
-exports.postEditProduct = async (req, res) => {
+exports.postEditProduct = async (req, res, next) => {
   try {
     const { id, title, price, description, imageUrl } = req.body;
     const product = await Product.findById(id);
@@ -85,11 +85,11 @@ exports.postEditProduct = async (req, res) => {
     await product.save();
     res.redirect('/admin/products');
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.body;
     const product = await Product.findById(id);
@@ -100,11 +100,11 @@ exports.deleteProduct = async (req, res) => {
     await product.deleteOne();
     res.redirect('/admin/products');
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ userId: req.session.user._id });
     res.render('admin/products', {
@@ -114,6 +114,6 @@ exports.getProducts = async (req, res) => {
       isAuth: req.session.user,
     });
   } catch (error) {
-    console.error(error);
+    return next(error);
   }
 };

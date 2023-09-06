@@ -39,28 +39,30 @@ app.use(
 app.use(csrf);
 app.use(flash());
 
-app.use(async (req, res, next) => {
-  try {
-    if (!req.session.user) return next();
-    const user = await User.findById(req.session.user._id);
-    req.user = user;
-    next();
-  } catch (err) {
-    console.log(err);
-  }
-});
-
 app.use((req, res, next) => {
   res.locals.isAuth = req.session.user;
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
+app.use(async (req, res, next) => {
+  try {
+    if (!req.session.user) return next();
+    const user = await User.findById(req.session.user._id);
+    req.user = user;
+    next();
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-app.use(errorController.pageNotFound);
+app.use(errorController.getPageNotFound);
+
+app.use(errorController.getInternalServerError);
 
 mongoose.connect(process.env.DB_URI).then(() => {
   app.listen(PORT);
