@@ -5,6 +5,7 @@ exports.getIndex = (req, res) => {
   res.render('shop/index', {
     docTitle: 'Home',
     path: '/',
+    successMessage: req.flash('success'),
   });
 };
 
