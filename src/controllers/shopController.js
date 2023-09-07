@@ -1,5 +1,10 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
+const { buildInvoice } = require('../utils/helpers');
+const { deleteFile } = require('../utils/file');
 
 exports.getIndex = (req, res, next) => {
   res.render('shop/index', {
@@ -94,6 +99,40 @@ exports.postOrder = async (req, res, next) => {
     req.user.cart.items = [];
     await req.user.save();
     res.redirect('/orders');
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.getInvoice = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({
+      _id: orderId,
+      user: req.session.user._id,
+    })
+      .populate('items.product')
+      .populate('user', 'email')
+      .catch(() => {
+        return res.status(404).render('404', { docTitle: 'Page Not Found' });
+      });
+    if (!order) {
+      return res.status(404).render('404', { docTitle: 'Page Not Found' });
+    }
+
+    const invoiceName = `invoice-${orderId}.pdf`;
+    const invoicePath = path.join('src', 'data', 'invoices', invoiceName);
+
+    const doc = new PDFDocument({ margin: 50 });
+    res.setHeader('Content-type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      'inline; filename="' + invoiceName + '"'
+    );
+    doc.pipe(fs.createWriteStream(invoicePath));
+    doc.pipe(res);
+    buildInvoice(doc, order);
+    doc.end();
   } catch (error) {
     return next(error);
   }

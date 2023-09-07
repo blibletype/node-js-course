@@ -6,6 +6,7 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const path = require('path');
 const csrf = require('csurf')();
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -14,6 +15,30 @@ const store = new MongoDBStore({
   uri: process.env.DB_URI,
   collection: 'sessions',
 });
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, './src/images');
+  },
+  filename: (req, file, callback) => {
+    callback(
+      null,
+      new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname
+    );
+  },
+});
+
+const fileFilter = (req, file, callback) => {
+  if (
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg'
+  ) {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
 
 app.set('view engine', 'pug');
 app.set('views', './src/views');
@@ -27,7 +52,12 @@ const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/errorController');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('imageUrl')
+);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/src/images', express.static(path.join(__dirname, 'images')));
+
 app.use(
   session({
     secret: 'kUngiMh4#ng.bH4Ngl',
@@ -48,8 +78,7 @@ app.use((req, res, next) => {
 app.use(async (req, res, next) => {
   try {
     if (!req.session.user) return next();
-    const user = await User.findById(req.session.user._id);
-    req.user = user;
+    req.user = await User.findById(req.session.user._id);
     next();
   } catch (error) {
     return next(error);

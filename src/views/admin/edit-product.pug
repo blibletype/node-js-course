@@ -2,23 +2,23 @@ extends ../layouts/main-layout.pug
 
 block content
     div(class="d-flex justify-content-center")
-        form(action=(editing === "true" ? "/admin/edit-product" : "/admin/add-product"), method="POST")
+        form(action=(editing === "true" ? "/admin/edit-product" : "/admin/add-product"), method="POST", enctype="multipart/form-data")
             div(class="mb-2")
                 label(for="title", class="form-label") Title
                 input(type="text", name="title", id="title", value=(editing === "true" ? product.title : (oldInputs && oldInputs.title) || ""), class=`form-control ${errors && errors.find(error => error.path === 'title') ? 'is-invalid' : ''}`)
                 div(class="invalid-feedback") Title should be at least 2 characters long, max: 30
             div(class="mb-2")
-                label(for="title", class="form-label") Price
+                label(for="price", class="form-label") Price
                 input(type="number" name="price" id="price" step="0.01", value=(editing === "true" ? product.price : (oldInputs && oldInputs.price) || ""), class=`form-control ${errors && errors.find(error => error.path === 'price') ? 'is-invalid' : ''}`)
                 div(class="invalid-feedback") Price should be a number
             div(class="mb-2")
-                label(for="title", class="form-label") Image Url
-                input(type="text", name="imageUrl", id="imageUrl", value=(editing === "true" ? product.imageUrl : (oldInputs && oldInputs.imageUrl) || ""), class=`form-control ${errors && errors.find(error => error.path === 'imageUrl') ? 'is-invalid' : ''}`)
-                div(class="invalid-feedback") Please enter valid URL
-            div(class="mb-2")
-                label(for="title", class="form-label") Description
+                label(for="description", class="form-label") Description
                 textarea(name="description", id="description", rows="5", class=`form-control ${errors && errors.find(error => error.path === 'description') ? 'is-invalid' : ''}`) #{editing === "true" ? product.description : (oldInputs && oldInputs.description) || ""}
                 div(class="invalid-feedback") Description should be at least 2 characters long
+            div(class="mb-2")
+                label(for="imageUrl", class="form-label") Image
+                input(type="file", name="imageUrl", id="imageUrl", class=`form-control ${errors && errors.find(error => error.path === 'imageUrl') ? 'is-invalid' : ''}`)
+                div(class="invalid-feedback") We accept only: PNG, JPEG, JPG
             if editing === "true"
                 input(type="hidden", value=(product._id), name="id") 
             div(class="")

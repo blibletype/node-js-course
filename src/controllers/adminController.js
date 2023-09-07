@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const { validationResult } = require('express-validator');
+const { deleteFile } = require('../utils/file');
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -12,9 +13,11 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
   try {
-    const { title, price, description, imageUrl } = req.body;
+    const { title, price, description } = req.body;
+    const image = req.file;
     const errors = validationResult(req).array() || [];
-    if (errors.length > 0) {
+    if (!image) errors.push({ path: 'imageUrl' });
+    if (errors.length > 0 || !image) {
       return res.status(422).render('admin/edit-product', {
         docTitle: 'Add Product',
         path: '/admin/add-product',
@@ -24,14 +27,13 @@ exports.postAddProduct = async (req, res, next) => {
           title: title,
           price: price,
           description: description,
-          imageUrl: imageUrl,
         },
       });
     }
     await Product.create({
       title: title,
       price: price,
-      imageUrl: imageUrl,
+      imageUrl: image.path,
       description: description,
       userId: req.session.user,
     });
@@ -62,7 +64,8 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
   try {
-    const { id, title, price, description, imageUrl } = req.body;
+    const { id, title, price, description } = req.body;
+    const image = req.file;
     const product = await Product.findById(id);
     if (product.userId.toString() !== req.session.user._id.toString()) {
       req.flash('error', "You don't have enough permissions");
@@ -80,7 +83,10 @@ exports.postEditProduct = async (req, res, next) => {
     }
     product.title = title;
     product.price = price;
-    product.imageUrl = imageUrl;
+    if (image) {
+      deleteFile(product.imageUrl);
+      product.imageUrl = image.path;
+    }
     product.description = description;
     await product.save();
     res.redirect('/admin/products');
@@ -97,6 +103,7 @@ exports.deleteProduct = async (req, res, next) => {
       req.flash('error', "You don't have enough permissions");
       return res.redirect('admin/products');
     }
+    deleteFile(product.imageUrl);
     await product.deleteOne();
     res.redirect('/admin/products');
   } catch (error) {
