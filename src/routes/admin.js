@@ -14,7 +14,6 @@ router.post(
   isAuth,
   body('title').isLength({ min: 2, max: 30 }).trim(),
   body('price').isNumeric(),
-  body('imageUrl').isURL(),
   body('description').isLength({ min: 2 }).trim(),
   adminController.postAddProduct
 );
@@ -26,7 +25,6 @@ router.post(
   isAuth,
   body('title').isLength({ min: 2, max: 30 }).trim(),
   body('price').isNumeric(),
-  body('imageUrl').isURL(),
   body('description').isLength({ min: 2 }).trim(),
   adminController.postEditProduct
 );

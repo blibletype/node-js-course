@@ -3,7 +3,7 @@ extends ../layouts/main-layout.pug
 block content 
     div(class="d-flex justify-content-center")
         div(class='card shadow-sm p-3 mb-5 bg-body-tertiary rounded', style="width: 18rem;")
-            img(src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png", alt="", class="card-img-top") 
+            img(src='/' + product.imageUrl, alt="", class="card-img-top") 
             div(class="card-body")
                 h5(class="card-title") #{product.title}
                 h6(class="card-subtitle mb-2 text-body-secondary") $#{product.price}
