@@ -3,6 +3,7 @@
 ## Project Description
 
 This is a simple node.js pet project written during the course.
+The version of nodejs used: 18.17.0
 
 ## Installation and Usage
 
@@ -25,7 +26,7 @@ To install and run the project, follow these steps:
    ```bash
    npm install
    ```
-   The version of nodejs used: 18.17.0
+   
 5. **Add the required keys to the .env file**
 
 6. **Run the project**:
