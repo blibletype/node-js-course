@@ -12,7 +12,7 @@ To install and run the project, follow these steps:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/blibletype/node.js-course.git
+   git clone https://github.com/blibletype/node-js-course.git
    ```
 
 2. **Navigate to the project directory**:
