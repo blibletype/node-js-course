@@ -1,5 +1,15 @@
+# Exclude the Node.js dependencies folder
 node_modules/
+
+# Exclude the Node.js package-lock file
+package-lock.json
+
+# Exclude the environment variables file
 .env
+
+# Exclude the directory and files created by the WebStorm IDE
 .idea/
+
+# Exclude all files in the src/images/ and src/data/ directories
 src/images/*
 src/data/*
