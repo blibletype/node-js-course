@@ -25,8 +25,9 @@ To install and run the project, follow these steps:
    ```bash
    npm install
    ```
+4. **Add the required keys to the .env file**
 
-4. **Run the project**:
+5. **Run the project**:
 
    - To run in development mode (using Nodemon):
 
