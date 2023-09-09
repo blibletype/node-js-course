@@ -21,13 +21,14 @@ To install and run the project, follow these steps:
    ```
 
 3. **Install the dependencies**:
+   The version of nodejs used: 18.17.0
 
    ```bash
    npm install
    ```
-4. **Add the required keys to the .env file**
+5. **Add the required keys to the .env file**
 
-5. **Run the project**:
+6. **Run the project**:
 
    - To run in development mode (using Nodemon):
 
