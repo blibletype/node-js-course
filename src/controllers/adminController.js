@@ -99,7 +99,7 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const product = await Product.findById(id);
     if (product.userId.toString() !== req.session.user._id.toString()) {
       req.flash('error', "You don't have enough permissions");
@@ -107,9 +107,13 @@ exports.deleteProduct = async (req, res, next) => {
     }
     deleteFile(product.imageUrl);
     await product.deleteOne();
-    res.redirect('/admin/products');
+    res.status(200).json({
+      message: 'Success!',
+    });
   } catch (error) {
-    return next(error);
+    res.status(500).json({
+      message: 'Deleting product failed...',
+    });
   }
 };
 

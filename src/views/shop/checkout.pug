@@ -1,0 +1,38 @@
+extends ../layouts/main-layout.pug 
+
+block content
+    if items.length > 0
+        div(class="container-fluid d-flex justify-content-center")
+            div(class="w-50")
+                h2 Checkout
+                table(class="table table-hover ")
+                    thead(class="")
+                        tr
+                            th Title
+                            th Price
+                            th Quantity
+                            th Total price
+                    tbody 
+                        each item in items
+                            tr(class="")
+                                th #{item.product.title}
+                                td $#{item.product.price}
+                                td #{item.quantity}
+                                td $#{(item.quantity * item.product.price).toFixed(2)}
+                div(class="d-flex justify-content-between")
+                    h4 Total: $#{totalSum}
+                    button(type="button" class="btn btn-primary" id="orderButton") Buy 
+
+    else 
+        div(class="") Cart empty
+  
+block end
+    script(src="https://js.stripe.com/v3/")
+    script.
+          var stripe = Stripe('pk_test_51NoRRYEeLLWItXQzetwqXUnfQJKcqt3YM4zuiFhAFCh5r3xCXwDGPftWZbYIr5f0pkhT4tq3OCZW26SGdrC40f9a00p7WTh3sw');
+          var orderButton = document.getElementById('orderButton');
+          orderButton.addEventListener('click', function() {
+            stripe.redirectToCheckout({
+              sessionId: '#{sessionId}',
+            });
+          });

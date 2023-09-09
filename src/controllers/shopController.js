@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const { buildInvoice } = require('../utils/helpers');
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const ITEMS_LIMIT = 4;
 
@@ -149,9 +150,56 @@ exports.getInvoice = async (req, res, next) => {
   }
 };
 
-exports.getCheckout = (req, res) => {
-  res.render('shop/checkout', {
-    docTitle: 'Checkout',
-    path: '/checkout',
-  });
+exports.getCheckout = async (req, res, next) => {
+  try {
+    const user = await req.user.populate('cart.items.product');
+    const products = user.cart.items;
+    let total = 0;
+    products.forEach((item) => {
+      total += item.quantity * item.product.price;
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: products.map((item) => {
+        return {
+          price_data: {
+            currency: 'usd',
+            unit_amount: item.product.price * 100,
+            product_data: {
+              name: item.product.title,
+              description: item.product.description,
+            },
+          },
+          quantity: item.quantity,
+        };
+      }),
+      mode: 'payment',
+      success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+      cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel',
+    });
+    res.render('shop/checkout', {
+      items: user.cart.items,
+      docTitle: 'Checkout',
+      path: '/checkout',
+      totalSum: total,
+      sessionId: session.id,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.getCheckoutSuccess = async (req, res, next) => {
+  try {
+    await Order.create({
+      items: req.user.cart.items,
+      user: req.user,
+    });
+    req.user.cart.items = [];
+    await req.user.save();
+    res.redirect('/orders');
+  } catch (error) {
+    return next(error);
+  }
 };

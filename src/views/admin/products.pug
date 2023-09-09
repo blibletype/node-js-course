@@ -3,9 +3,9 @@ extends ../layouts/main-layout.pug
 block content
     div(class="container")
         if products.length > 0 
-            div(class="row row-cols-auto")
+            div(class="row row-cols-auto justify-content-center")
                 each product in products
-                    div(class="col")
+                    article(class="col")
                         div(class='card shadow-sm p-3 mb-5 bg-body-tertiary rounded', style="width: 18rem; height: 28rem;")
                             img(src='/' + product.imageUrl, alt="", class="img-thumbnail h-75") 
                             div(class="card-body")
@@ -14,10 +14,12 @@ block content
                                 p(class="card-text") #{product.description}
                             div(class="card-body d-flex justify-content-between")
                                 a(href="/admin/edit-product/" + product._id + "?edit=true", class="btn btn-success") Edit
-                                form(action="/admin/delete-product", method="post")
-                                    input(type="hidden", name="_csrf", value=csrfToken)
-                                    input(type="hidden", name="id", value=product._id) 
-                                    button(type="submit", class="btn btn-danger") Delete
+                                input(type="hidden" name="id" value=product._id) 
+                                input(type="hidden" name="_csrf" value=csrfToken)
+                                button(type="button" class="btn btn-danger" onclick="deleteProduct(this)") Delete
             include ../includes/pagination.pug                       
         else 
             div(class="") There are no products yet
+
+block end 
+    script(src="/js/admin.js") 

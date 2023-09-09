@@ -15,19 +15,17 @@ block content
                     tbody 
                         each item in items
                             tr(class="")
-                                th(class="") #{item.product.title}
-                                td(class="") $#{item.product.price}
-                                td(class="") #{item.quantity}
-                                td(class="") $#{(item.quantity * item.product.price).toFixed(2)}
-                                td(class="") 
+                                th #{item.product.title}
+                                td $#{item.product.price}
+                                td #{item.quantity}
+                                td $#{(item.quantity * item.product.price).toFixed(2)}
+                                td 
                                     form(action="/cart-remove-item" method="POST", class="")
                                         input(type="hidden", name="id", value=item.product._id)
                                         input(type="hidden", name="_csrf", value=csrfToken)
                                         button(type="submit", class="btn btn-danger btn-sm") Remove 
-                div(class="d-flex justify-content-end")
-                    form(action="/create-order", method="post") 
-                        input(type="hidden", name="_csrf", value=csrfToken)
-                        button(type="submit", class="btn btn-primary") Buy
+                div(class="d-flex justify-content-center")
+                    a(href="/checkout" class="btn btn-primary") Order now
 
     else 
         div(class="") There are no items yet
