@@ -2,6 +2,8 @@ const Product = require('../models/product');
 const { validationResult } = require('express-validator');
 const { deleteFile } = require('../utils/file');
 
+const ITEMS_LIMIT = 4;
+
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     docTitle: 'Add Product',
@@ -113,12 +115,22 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({ userId: req.session.user._id });
+    const page = +req.query.page || 1;
+    const totalItemsCount = await Product.find().countDocuments();
+    const products = await Product.find({ userId: req.session.user._id })
+      .skip((page - 1) * ITEMS_LIMIT)
+      .limit(ITEMS_LIMIT);
     res.render('admin/products', {
       products: products,
       docTitle: 'Products',
       path: '/admin/products',
       isAuth: req.session.user,
+      currentPage: page,
+      hasNextPage: ITEMS_LIMIT * page < totalItemsCount,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItemsCount / ITEMS_LIMIT),
     });
   } catch (error) {
     return next(error);

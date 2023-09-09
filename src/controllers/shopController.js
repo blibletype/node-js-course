@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const { buildInvoice } = require('../utils/helpers');
-const { deleteFile } = require('../utils/file');
+
+const ITEMS_LIMIT = 4;
 
 exports.getIndex = (req, res, next) => {
   res.render('shop/index', {
@@ -16,11 +17,21 @@ exports.getIndex = (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const page = +req.query.page || 1;
+    const totalItemsCount = await Product.find().countDocuments();
+    const products = await Product.find()
+      .skip((page - 1) * ITEMS_LIMIT)
+      .limit(ITEMS_LIMIT);
     res.render('shop/products', {
       products: products,
       docTitle: 'Shop',
       path: '/products',
+      currentPage: page,
+      hasNextPage: ITEMS_LIMIT * page < totalItemsCount,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItemsCount / ITEMS_LIMIT),
     });
   } catch (error) {
     return next(error);
