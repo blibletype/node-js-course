@@ -2,8 +2,7 @@
 
 ## Project Description
 
-This is a simple node.js pet project written during the course.
-The version of nodejs used: 18.17.0
+This is a simple node.js pet project.
 
 ## Installation and Usage
 
@@ -18,7 +17,7 @@ To install and run the project, follow these steps:
 2. **Navigate to the project directory**:
 
    ```bash
-   cd node.js-course
+   cd node-js-course
    ```
 
 3. **Install the dependencies**:
